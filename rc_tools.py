@@ -5,9 +5,9 @@ import json
 import os
 from pathlib import Path
 
-#Call packages as modules
+# Call packages as modules
 
-#global varibles
+# Global varibles
 script_path = sys.path[0][0:sys.path[0].rfind('/scripts')]+ '/prefs/scripts'
 
 rc_toolWin = 'rc_toolsWin'
@@ -21,16 +21,16 @@ do_not_export_prefix = 'DNE_'
 
 RC_CREATED = list()
 
-#create the window
+# Create the window
 def rc_tool():
     #if the window is exsit, delete it
     if cmds.window(rc_toolWin, exists = 1):
         cmds.deleteUI(rc_toolWin, window = 1)
     
-    #run the function to create the window
+    # Run the function to create the window
     rc_toolUI()
 
-    #initial the window position and size
+    # initialize the window position and size
     cmds.windowPref(rc_toolWin, remove = True)
     cmds.window(rc_toolWin, edit = True,  topLeftCorner = (200, 200))
     #show the window
@@ -40,10 +40,10 @@ def rc_toolUI():
     #initial the window
     ccWin = cmds.window(rc_toolWin, title = 'rc_tools v1.0', resizeToFitChildren = 1,  sizeable = 0)
     
-    #the main layout -- column
+    # The main layout: column
     mainLayout = cmds.columnLayout( adjustableColumn = 1, width = 300)
     
-    #layout of the "group" set
+    # Layout of the units frame
     cmds.frameLayout(label = 'Units')
     cmds.columnLayout(columnAttach = ('left', 0))
     cmds.button(label = 'cm', w = 100, command = change_unit_cm)
@@ -54,7 +54,7 @@ def rc_toolUI():
     cmds.floatFieldGrp(rc_height_field, numberOfFields = 1, label = f'Object Height ({current_unit}): ', value1 = 2.0 , precision = 2)
     cmds.setParent(mainLayout)
 
-    #layout of the "group" set
+    # Layout of the rig setup frame
     cmds.frameLayout(label = 'Rig Presets')
     cmds.columnLayout(columnAttach = ('left', 0))
     cmds.button(label = 'Biped', w = 100, command = biped_setup)
@@ -62,7 +62,7 @@ def rc_toolUI():
     cmds.button(label = 'Gun', w = 100, command = gun_setup)
     cmds.setParent(mainLayout)
 
-    #layout of the "controllers" set
+    # Layout of the mirroring frame
     cmds.frameLayout(label = 'Edit')
     cmds.columnLayout(columnAttach = ('left', 0))
     cmds.button(label = 'Mirror +X', w = 100, command = test)
@@ -73,7 +73,7 @@ def rc_toolUI():
 
     cmds.setParent(mainLayout)
 
-    #layout of the "controllers" set
+    # Layout of the export frame
     cmds.frameLayout(label = 'Create')
     cmds.columnLayout(columnAttach = ('left', 0))
     cmds.button(label = 'Create Rig', w = 100, command = rig_build)
@@ -119,7 +119,7 @@ def change_unit_ft(self):
     convert_and_update_unit(past_unit, current_unit, set_height)
 
 def convert_and_update_unit(input_unit, output_unit, input_val):
-    #convert everything to cm
+    # convert everything to cm
     if input_unit == 'm':
         val = input_val * 100
     elif input_unit == 'in':
@@ -129,7 +129,7 @@ def convert_and_update_unit(input_unit, output_unit, input_val):
     else:
         val = input_val
 
-    #calc cm to everything
+    # calc cm to everything
     if output_unit == 'm':
         output_val = val / 100
     elif output_unit == 'in':
@@ -149,7 +149,6 @@ def convert_and_update_unit(input_unit, output_unit, input_val):
         if win == 'OptionBoxWindow':
             cmds.deleteUI(win)
             return
-
 
 
 def test(self):
@@ -182,7 +181,7 @@ def height_obj_setup():
     '''
     return height_shape
 
-#Error handeling???
+# Error handeling???
 '''
 exc_type, exc_obj, exc_tb = sys.exc_info()
 fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
