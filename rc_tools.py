@@ -8,7 +8,7 @@ from pathlib import Path
 # Call packages as modules
 
 # Global varibles
-script_path = sys.path[0][0:sys.path[0].rfind('/scripts')]+ '/prefs/scripts'
+script_path = sys.path[0][0:sys.path[0].rfind('/scripts')] + '/prefs/scripts'
 
 rc_toolWin = 'rc_toolsWin'
 rc_height_field = 'height_field'
@@ -30,14 +30,15 @@ def rc_tool():
     # Run the function to create the window
     rc_toolUI()
 
-    # initialize the window position and size
+    # Initialize the window position and size
     cmds.windowPref(rc_toolWin, remove = True)
     cmds.window(rc_toolWin, edit = True,  topLeftCorner = (200, 200))
-    #show the window
+    
+    # Show the window
     cmds.showWindow(rc_toolWin)
     
 def rc_toolUI():
-    #initial the window
+    # Initialize the window
     ccWin = cmds.window(rc_toolWin, title = 'rc_tools v1.0', resizeToFitChildren = 1,  sizeable = 0)
     
     # The main layout: column
@@ -67,10 +68,6 @@ def rc_toolUI():
     cmds.columnLayout(columnAttach = ('left', 0))
     cmds.button(label = 'Mirror +X', w = 100, command = test)
     cmds.button(label = 'Mirror -X', w = 100, command = test)
-    
-    #cmds.scrollLayout(childResizable = 1)
-    #cmds.gridLayout(numberOfColumns = 7, cellWidthHeight = (40, 40), width = 100)
-
     cmds.setParent(mainLayout)
 
     # Layout of the export frame
@@ -79,14 +76,9 @@ def rc_toolUI():
     cmds.button(label = 'Create Rig', w = 100, command = rig_build)
     cmds.button(label = 'Export for Unreal', w = 100, command = test)
     
-    #cmds.scrollLayout(childResizable = 1)
-    #cmds.gridLayout(numberOfColumns = 7, cellWidthHeight = (40, 40), width = 100)
-
-    #cmds.setParent(mainLayout)
-
-
 
 def change_unit_cm(self):
+    # Records current unit and height, then change unit to cm and convert
     past_unit = cmds.currentUnit(query = True)
     set_height = cmds.floatFieldGrp(rc_height_field, query = True, value1 = True)
     cmds.currentUnit( linear='cm')
@@ -95,6 +87,7 @@ def change_unit_cm(self):
     convert_and_update_unit(past_unit, current_unit, set_height)
 
 def change_unit_m(self):
+    # Records current unit and height, then change unit to m and convert
     past_unit = cmds.currentUnit(query = True)
     set_height = cmds.floatFieldGrp(rc_height_field, query = True, value1 = True)
     cmds.currentUnit( linear='m')
@@ -103,6 +96,7 @@ def change_unit_m(self):
     convert_and_update_unit(past_unit, current_unit, set_height)
 
 def change_unit_in(self):
+    # Records current unit and height, then change unit to in and convert
     past_unit = cmds.currentUnit(query = True)
     set_height = cmds.floatFieldGrp(rc_height_field, query = True, value1 = True)
     cmds.currentUnit( linear='in')
@@ -111,6 +105,7 @@ def change_unit_in(self):
     convert_and_update_unit(past_unit, current_unit, set_height)
 
 def change_unit_ft(self):
+    # Records current unit and height, then change unit to ft and convert
     past_unit = cmds.currentUnit(query = True)
     set_height = cmds.floatFieldGrp(rc_height_field, query = True, value1 = True)
     cmds.currentUnit( linear='ft')
@@ -119,7 +114,13 @@ def change_unit_ft(self):
     convert_and_update_unit(past_unit, current_unit, set_height)
 
 def convert_and_update_unit(input_unit, output_unit, input_val):
-    # convert everything to cm
+    '''
+    arguments:
+        input_unit (string): The starting unit
+        output_unit (string): The unit being converted to
+        input_val (float): The input value that is converted to output unit
+    '''
+    # Convert everything to cm
     if input_unit == 'm':
         val = input_val * 100
     elif input_unit == 'in':
@@ -129,7 +130,7 @@ def convert_and_update_unit(input_unit, output_unit, input_val):
     else:
         val = input_val
 
-    # calc cm to everything
+    # Calculate cm to everything
     if output_unit == 'm':
         output_val = val / 100
     elif output_unit == 'in':
@@ -139,9 +140,10 @@ def convert_and_update_unit(input_unit, output_unit, input_val):
     else:
         output_val = val
 
+    # Update Object height
     cmds.floatFieldGrp(rc_height_field, edit=True, label = f'Object Height ({output_unit}): ', value1 = output_val)
 
-    #This resize grid to current units.
+    # This resize grid to current units.
     mel.eval('GridOptions;')
     mel.eval('gridCallback OptionBoxWindow|formLayout141|tabLayout9|formLayout143|tabLayout10|columnLayout2011 1;')
     all_windows = cmds.lsUI( windows=True )
@@ -168,7 +170,6 @@ def height_obj_setup():
 
     #cmds.xform(height_shape, t = (0, height, 0), scale = (height/4, height/4, height/4))
 
-
     '''
     disk = mel.eval(f'polyDisc -sides 3 -subdivisionMode 4 -subdivisions 1 -radius {disk_radius};')
     #print(disk)
@@ -181,12 +182,7 @@ def height_obj_setup():
     '''
     return height_shape
 
-# Error handeling???
-'''
-exc_type, exc_obj, exc_tb = sys.exc_info()
-fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-print(exc_type, fname, exc_tb.tb_lineno)
-'''
+
 def biped_setup(self):
     ''' Sets up the biped's locators, then are moved by user. '''
     try:
@@ -222,20 +218,28 @@ def biped_setup(self):
         
 
 def vehicle_setup(self):
+    ''' Sets up the vehicles's locators, then are moved by user. '''
+    # Wheels
+    # Doors
+    # Suspension
     print('vehicle')
 
+
 def gun_setup(self):
+    ''' Sets up the guns's locators, then are moved by user. '''
+    # Trigger
+    # Slide/bolt
+    # Magazine
+    # Stock
+    # Bullets
+    # Rotating barrels
     print('gun')
 
 
-
-
-
-
 def rig_build(self):
+    ''' Building The rig, set for only Biped for now. '''
     print('Creating Rig')
 
-    
     height_scale_group = cmds.ls('*_height_scale_grp')[0]
     height_scale = cmds.getAttr(f'{height_scale_group}.scaleX')
     
@@ -248,6 +252,7 @@ def rig_build(self):
         print('There is no rig setup to build.')
         return
 
+    # Converts all locators to joints
     joint_group = locator_to_joints(locator_group)
     joints = cmds.listRelatives(joint_group, allDescendents = True, type = 'joint')
     for j in joints:
@@ -255,7 +260,6 @@ def rig_build(self):
     cmds.parent(joint_group, main_loc_group)
         
     if rig_type == 'biped':
-
         controls_group = controls_for_biped(joints, height_scale)
 
     elif rig_type == 'vehicle':
@@ -274,6 +278,14 @@ def rig_build(self):
 
 
 def controls_for_biped(joints, height_scale):
+    '''
+    arguments:
+        joints list(string): List of joints, might not be needed
+        height_scale (float): Height of the biped, might not be needed because its being found in the functions that need it
+        input_val (float): The input value that is converted to output unit
+    Return:
+        controls?
+    '''
     main_loc_group = cmds.ls('*_rig')[0]
     setup_group = cmds.ls('*_setup_grp')[0]
     controls_group = cmds.group(name = 'controls' + group_suffix, empty=True)
@@ -286,14 +298,11 @@ def controls_for_biped(joints, height_scale):
     #height_scale_group = cmds.ls('*_height_scale_grp')[0]
     #height_scale = cmds.getAttr(f'{height_scale_group}.scaleX')
 
-
     try:
-
         root_control = create_control_for_joint(f'root{joint_suffix}', shape = 'pentagon', rot_shape = [0,0,0], scale = [2,2,2])
         cmds.parent(root_control[0][0], controls_group)
         pelvis_control = create_control_for_joint(f'pelvis{joint_suffix}', parent = root_control[1], shape = 'ring', rot_shape = [0,0,86.367], scale = [1,.3,1]) 
             
-        
         #spine_01 - spine_05
         spine_list = list()
         for i, spine in enumerate(cmds.ls(f'spine_*{joint_suffix}')):
@@ -309,7 +318,6 @@ def controls_for_biped(joints, height_scale):
                 neck_list.append(create_control_for_joint(neck, parent = spine_list[-1][1], scale = [.1,.1,.1]))
             else:
                 neck_list.append(create_control_for_joint(neck, parent = neck_list[-1][1], scale = [.1,.1,.1]))
-        
         
         #head
         head_joint = f'head{joint_suffix}'
@@ -370,9 +378,8 @@ def controls_for_biped(joints, height_scale):
                     elif side == 'r':
                         fingers_list.append(create_control_for_joint(digit, parent = fingers_list[-1][1], shape = 'pyramid_45', loc_shape = [0,.02,0], scale = [.01,.01,.01]))
 
-
         '''
-        DEPRICATED Combined these loops
+        DEPRICATED: Combined these loops
 
         #L_fingers
         l_fingers_list = list()
@@ -403,10 +410,7 @@ def controls_for_biped(joints, height_scale):
                 r_fingers_list.append(create_control_for_joint(digit, height_scale, parent = r_fingers_list[-1][1], shape = 'pyramid_45', loc_shape = [0,.02,0], scale = [.01,.01,.01]))
         '''
         
-
         print('FINISHED UP TO FINGERS\n\n\n\n')
-
-        
             
         for side in ['r', 'l']:
             #arm_controls = arm_setup(f'upperarm_{side}{joint_suffix}', f'lowerarm_{side}{joint_suffix}', f'hand_{side}{joint_suffix}', root = root_control[1], ik_jnt = f'ik_foot_{side}{joint_suffix}', side = side)
@@ -418,13 +422,11 @@ def controls_for_biped(joints, height_scale):
             '''
 
             arm_controls = arm_setup(f'upperarm_{side}{joint_suffix}', f'lowerarm_{side}{joint_suffix}', f'hand_{side}{joint_suffix}', ik_jnt = f'ik_hand_{side}{joint_suffix}', side = side, switch = arm_ik_switch_control[1][0])
-
             leg_controls = leg_setup(f'thigh_{side}{joint_suffix}', f'calf_{side}{joint_suffix}', f'foot_{side}{joint_suffix}', f'ball_{side}{joint_suffix}', root = root_control[1], ik_jnt = f'ik_foot_{side}{joint_suffix}', side = side)
-            
-        
 
         #no left and right side loop because of ctrl shape
         # Coloring Controls
+        '''
         left_controls = cmds.ls(f'*_l{control_suffix}')
         for ctrl in left_controls:
             cmds.setAttr(f'{ctrl}.overrideEnabled', 1)
@@ -434,7 +436,9 @@ def controls_for_biped(joints, height_scale):
         for ctrl in right_controls:
             cmds.setAttr(f'{ctrl}.overrideEnabled', 1)
             cmds.setAttr(f'{ctrl}.overrideColor', 13)
-
+        '''
+        controls = cmds.listRelatives(controls_group, children = True, type = 'transforms')
+        auto_color_controls(controls_group)
 
         return
     
@@ -597,6 +601,7 @@ def arm_setup(upperarm, lowerarm, hand, root = None, ik_jnt = None, side = None,
         attr_name = f'arm_{side}_IKFK'
     else:
         attr_name = 'arm_IKFK'
+
     create_2_jnt_ik_setup(upperarm, lowerarm, hand, switch_control, pole_vector_parent = root, top_joint_parent = arm_parent, attr_name = attr_name)
 
     #find twist joints then create controls
@@ -710,7 +715,6 @@ def create_1_jnt_ik_setup(bind_joint_top, bind_joint_bottom, switch_control, att
     control_top_parent = joint_top_parent.replace(joint_suffix, control_suffix)
 
     try:
-
         #Adds Attribute to switch
         if not cmds.attributeQuery(f'{switch_control}.{attr_name}', exists = True):
             print('Attribute Created')
@@ -789,7 +793,6 @@ def create_1_jnt_ik_setup(bind_joint_top, bind_joint_bottom, switch_control, att
         top_ctrl_grp = cmds.listRelatives(fk_controls[0], parent = True)[0]
         cmds.parent(top_ctrl_grp, control_top_parent)
 
-
         ############################
         # Creating controls for ik #
         ############################
@@ -829,7 +832,6 @@ def create_1_jnt_ik_setup(bind_joint_top, bind_joint_bottom, switch_control, att
         print(exc_type, fname, exc_tb.tb_lineno)
 
 
-
 def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, switch_control, pole_vector_parent = None, top_joint_parent = None, attr_name = 'IKFK_Switch'):
     '''
     arguments:
@@ -839,7 +841,7 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
         switch_control: the control that will have the ik/fk switch added to.
         pole_vector_parent: where the pole vector control is parented. (give the root ctrl usually)
         top_joint_parent: the joint the new joints are going to be parented to.
-        control_name: 
+        attr_name: name of the attribute on the switch control (could be combined to switch control?)
 
     return:
         [[ik_joints], [ik_controls]],
@@ -881,7 +883,6 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
     cmds.addAttr(switch_control, longName = attr_name, attributeType = 'double', min = 0, max = 1, keyable = True)
 
     try:
-
         # Creating the ik and fk joint chains
         for ikfk in ['ik', 'fk']:
             for joint in joint_list:
@@ -974,6 +975,7 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
 
         
         # mo = False gets us the correct result, but I think there are other issues in the joint rotations
+        # not using parent constraint because twist joints dont follow the rotation/position of the arm switching between ik and fk instead of just following rotation
         bottom_orient_constraint = cmds.orientConstraint(ik_handle_ctrl[1], ik_joints[2], mo = True)
         cmds.parent(bottom_orient_constraint, ik_setup_sys_group)
         cmds.parent(ik_handle[0], ik_handle_ctrl[1])
@@ -1033,8 +1035,6 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
         pole_vector_control = create_control_for_joint(temp_locator[0], parent = pole_vector_parent, shape = 'sphere_rough', scale = [.04, .04, .04])[1] # dont need loc if temp locator is used? , loc = pole_vector_location
         ik_controls.append(pole_vector_control)
         to_delete(temp_locator)
-
-        
 
         # Create line from ik mid joint to pole vector control
         #pole_vector_line = cmds.curve(p=[pole_vector_location, cmds.xform(bind_joint_mid, query = True, absolute = True, translation = True)],  d = 1)
@@ -1162,15 +1162,16 @@ def create_space_switching_attr(control, switch_with_1, switch_with_2 = None, sw
     else:
         min_value = 0
     '''
-    cmds.addAttr(control, longName = switch_name, defaultValue = 0, minValue = 0, maxValue = 1, attributeType = 'float', keyable = True)
-    cmds.setDrivenKeyframe(switch_with_1, currentDriver = f'{control}.{switch_name}', driverValue = 0, value = 0, inTangentType = 'linear', outTangentType = 'linear')
-    cmds.setDrivenKeyframe(switch_with_1, currentDriver = f'{control}.{switch_name}', driverValue = 1, value = 1, inTangentType = 'linear', outTangentType = 'linear')
+    name = switch_name or 'space_switch'
+    cmds.addAttr(control, longName = name, defaultValue = 0, minValue = 0, maxValue = 1, attributeType = 'float', keyable = True)
+    cmds.setDrivenKeyframe(switch_with_1, currentDriver = f'{control}.{name}', driverValue = 0, value = 0, inTangentType = 'linear', outTangentType = 'linear')
+    cmds.setDrivenKeyframe(switch_with_1, currentDriver = f'{control}.{name}', driverValue = 1, value = 1, inTangentType = 'linear', outTangentType = 'linear')
     
     # Second value is on by default
     if switch_with_2:
         # if using negative value, dv and v = 0, then dv = -1 and v = 1
-        cmds.setDrivenKeyframe(switch_with_2, currentDriver = f'{control}.{switch_name}', driverValue = 0, value = 1, inTangentType = 'linear', outTangentType = 'linear')
-        cmds.setDrivenKeyframe(switch_with_2, currentDriver = f'{control}.{switch_name}', driverValue = 1, value = 0, inTangentType = 'linear', outTangentType = 'linear')
+        cmds.setDrivenKeyframe(switch_with_2, currentDriver = f'{control}.{name}', driverValue = 0, value = 1, inTangentType = 'linear', outTangentType = 'linear')
+        cmds.setDrivenKeyframe(switch_with_2, currentDriver = f'{control}.{name}', driverValue = 1, value = 0, inTangentType = 'linear', outTangentType = 'linear')
         
 
 def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1, twist_joints = list()):
@@ -1208,13 +1209,14 @@ def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1
 def auto_color_controls(controls_group):
     '''
     arguments:
-        controls_group (string): The main controls group
+        controls_group list(string): The main controls group
     '''
-    # for changing the controls color so left is blue, right is red, center is yellow
+    # For changing the controls color so left is blue, right is red, center is yellow
     right_controls = list()
     left_controls = list()
     center_controls = list()
 
+    # Gets controls in group
     controls_in_group = [t for t in cmds.listRelatives(controls_group, allDescendents = True, type = 'transform') if control_suffix in t]
     temp_control_list = controls_in_group
 
@@ -1404,7 +1406,7 @@ def reset_to_world(object = None):
     ''' Resets the tranforms of an object back to world space. '''
     if not object:
         try:
-            object = cmds.ls(sl=True)[0]
+            object = cmds.ls(sl = True)[0]
         except:
             print('Nothing to run.')
             return
@@ -1427,7 +1429,8 @@ def reset_to_world(object = None):
 def lock_attr(attr_list, hide = False):
     ''' 
     Arguments:
-        args (list(Strings)): list of attributes to lock
+        attr_list list(strings): list of attributes to lock
+        hide (boolean): whether it is hidden or not, default is visable
     '''
 
     for attr in attr_list:
@@ -1553,11 +1556,12 @@ def old_import_ctrl_shape(control_to_import, loc = (0,0,0), rot = (0,0,0), scale
 
 def export_ctrl_shape(control_to_export = None, screenshot = False):
     ''' 
-    Export Control to json or xml. 
+    Export Control to json (or xml). 
     Arguments:
         control_to_export (string): The name of the shape being exported, or control shape selected
         screenshot (boolean): If the control is screenshotted
     '''
+    # If nothing is inputed to export, try checking if something is selected with control verts
     if not control_to_export:
         try:
             control_to_export = cmds.ls(sl=True)[0]
@@ -1570,7 +1574,7 @@ def export_ctrl_shape(control_to_export = None, screenshot = False):
     file_name = control_to_export + '.json'
     files_in_path = os.listdir(script_path+'/rc_tools/curves/')
 
-    #check if the data already exists and warn that it's going to overwrite
+    # Check if the data already exists and warn that it's going to overwrite
     if file_name in files_in_path:
         # OLD is a folder where things are moved
         if file_name == 'OLD':
@@ -1977,12 +1981,6 @@ def change_package_locator(locators = None, size = None, width = None, scale = N
 
 
 
-
-
-
-
-
-
 '''
 def change_package_locator_width(width, locators = None):
     if not locators:
@@ -1998,7 +1996,7 @@ def change_package_locator_width(width, locators = None):
 '''
 
 '''
-Skin weight data< check out:
+Skin weight data -> check out:
 https://www.aganimator.com/tutorials/2016/2/19/saving-mayas-skin-weights-to-json
 '''
 
@@ -2040,11 +2038,7 @@ for f in dir_list:
 #joints_to_locators()
 
 
-
-
-
-
-
+# pyside2 doesnt work with my maya ;_;
 
 """
 import sys
@@ -2076,12 +2070,9 @@ sys.exit(0)
 
 
 
-
-
 # This Python file uses the following encoding: utf-8
 import sys
 import os
-
 
 from PySide2.QtWidgets import QApplication, QMainWindow
 from PySide2.QtCore import QFile
@@ -2107,3 +2098,8 @@ if __name__ == "__main__":
     widget.show()
     sys.exit(app.exec_())
 """
+
+
+
+
+
