@@ -1,11 +1,22 @@
+'''
+rc_tools v1.0
+by Ryan Chan
+July 20, 2023
+ryanchanart@gmail.com
+
+Description:
+    This is a series of tools to make rigs, simulations and animation tools 
+    such as pose libraries, and ikfk matching.
+
+    Early WIP, just rigs for now.
+'''
+
 import maya.cmds as cmds
 import time
 import sys
 import json
 import os
 from pathlib import Path
-
-# Call packages as modules
 
 # Global varibles
 script_path = sys.path[0][0:sys.path[0].rfind('/scripts')] + '/prefs/scripts'
@@ -437,7 +448,7 @@ def controls_for_biped(joints, height_scale):
             cmds.setAttr(f'{ctrl}.overrideEnabled', 1)
             cmds.setAttr(f'{ctrl}.overrideColor', 13)
         '''
-        controls = cmds.listRelatives(controls_group, children = True, type = 'transforms')
+        controls = cmds.listRelatives(controls_group, children = True, type = 'transform')
         auto_color_controls(controls_group)
 
         return
@@ -614,11 +625,15 @@ def arm_setup(upperarm, lowerarm, hand, root = None, ik_jnt = None, side = None,
         if twist_joints:
             print('Theres existing twist joints in upperarm')
             #create controls
-        else:
-            if joint == upperarm:
-                create_twist_joints(upperarm, lowerarm, 2)
-            elif joint == lowerarm:
-                create_twist_joints(lowerarm, hand, 2)
+        #else:
+        # Creatng twist joints anyways.
+        twists = len(twist_joints)
+        to_delete(twist_joints)
+
+        if joint == upperarm:
+            create_twist_joints(upperarm, lowerarm, twists)
+        elif joint == lowerarm:
+            create_twist_joints(lowerarm, hand, twists)
     
     return
     
@@ -651,7 +666,7 @@ def leg_setup(thigh, calf, foot, ball, root = None, ik_jnt = None, side = None):
     fk_joint_root = leg[1][0][-1]
     fk_control_root = leg[1][1][-1]
 
-    create_1_jnt_ik_setup(foot, ball, switch_control, attr_name = attr_name, ik_joint_root = ik_joint_root, ik_control_root = ik_control_root, fk_joint_root = fk_joint_root, fk_control_root = fk_control_root)
+    #create_1_jnt_ik_setup(foot, ball, switch_control, attr_name = attr_name, ik_joint_root = ik_joint_root, ik_control_root = ik_control_root, fk_joint_root = fk_joint_root, fk_control_root = fk_control_root)
 
     #find twist joints then create controls
     for joint in [thigh, calf]:
@@ -661,7 +676,8 @@ def leg_setup(thigh, calf, foot, ball, root = None, ik_jnt = None, side = None):
             if things.find('twist') > 0:
                 twist_joints.append(things)
         if twist_joints:
-            print('Theres existing twist joints in thigh')
+            print(f'Theres existing twist joints in {joint}')
+            print(twist_joints)
             #create controls
         else:
             if joint == thigh:
@@ -716,21 +732,30 @@ def create_1_jnt_ik_setup(bind_joint_top, bind_joint_bottom, switch_control, att
 
     try:
         #Adds Attribute to switch
-        if not cmds.attributeQuery(f'{switch_control}.{attr_name}', exists = True):
+        if not cmds.attributeQuery(attr_name, node = switch_control, exists = True):
             print('Attribute Created')
             cmds.addAttr(switch_control, longName = attr_name, attributeType = 'double', min = 0, max = 1, keyable = True)
 
         # Creating the ik and fk joint chains
         for ikfk in ['ik', 'fk']:
             for joint in joint_list:
-                # Making the joints
-                new_joint_parent = f'{do_not_export_prefix}{ikfk}_{cmds.listRelatives(joint, parent = True)[0]}'
-                new_joint = cmds.joint(None, name = f'{do_not_export_prefix}{ikfk}_{joint}')
-                cmds.matchTransform(new_joint, joint)
+                new_joint_name =  f'{do_not_export_prefix}{ikfk}_{joint}'
+
+                # Ff the joint already exists
+                if cmds.ls(new_joint_name):
+                    print(f'{new_joint_name} existed.')
+                    new_joint = cmds.ls(new_joint_name)[0]
+                else:
+                    # Making the joints
+                    new_joint_parent = f'{do_not_export_prefix}{ikfk}_{cmds.listRelatives(joint, parent = True)[0]}'
+                    new_joint = cmds.joint(None, name = new_joint_name)
+                    cmds.matchTransform(new_joint, joint)
                 
-                # Parent constraint the new chain base to target root joint
-                if joint != bind_joint_top:
-                    cmds.parent(new_joint, new_joint_parent)
+                    print(new_joint)
+
+                    # Parent constraint the new chain base to target root joint
+                    if joint != bind_joint_top:
+                        cmds.parent(new_joint, new_joint_parent)
 
                 if ikfk == 'ik':
                     ik_joints.append(new_joint)
@@ -890,9 +915,10 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
                 new_joint_parent = f'{do_not_export_prefix}{ikfk}_{cmds.listRelatives(joint, parent = True)[0]}'
                 new_joint = cmds.joint(None, name = f'{do_not_export_prefix}{ikfk}_{joint}')
                 cmds.matchTransform(new_joint, joint)
+
+                print(new_joint)
                 
                 # Parent constraint the new chain base to target root joint
-
                 if joint != bind_joint_top:
                     cmds.parent(new_joint, new_joint_parent)
 
@@ -1017,7 +1043,7 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
         if negative_area > positive_area:
             poly_move_direction = -poly_move_direction
 
-        # Move Poly out
+        # Move Poly out in vDirection
         cmds.moveVertexAlongDirection(f'{temp_poly}.vtx[1]', vDirection = poly_move_direction)
 
         # Store vertex location then delete polygon.
@@ -1025,7 +1051,7 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
         to_delete(temp_poly)
         #cmds.delete(temp_poly)
 
-        # Create Pole Vector control.
+        # Create Pole Vector control
         temp_locator = cmds.spaceLocator(name = f'pv_{mid_joint_name}')
         cmds.xform(temp_locator, translation = pole_vector_location)
 
@@ -1060,6 +1086,7 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
         cmds.parent(cluster1[1], ik_setup_sys_group)
         cmds.parent(cluster2[1], ik_setup_sys_group)
         cmds.parent(pole_vector_line, ik_setup_sys_group)
+        ik_controls.append([pole_vector_line])
 
         # Create empty group at pole vector location to parent to fk mid control for fkik matching.
         #mid_joint_name = bind_joint_mid[:(len(bind_joint_mid) - len(joint_suffix))]
@@ -1077,7 +1104,6 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
         pole_vector_constraint = cmds.poleVectorConstraint(pole_vector_control, ik_handle[0])
         # move the pole vector constraint to the systems_group
         cmds.parent(pole_vector_constraint, ik_setup_sys_group)
-        
 
         #Set visibility of IK controls
         for ik_ctrl in ik_controls:
@@ -1180,23 +1206,55 @@ def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1
         bind_joint_root (string): joint 1 
         bind_joint_tip (string): joint 2
         num_of_twist_joints (int): amount of twist joints to make, 
-        twist_joint_1 (string): if given a twist joint, don't generate one.
-        twist_joint_2 (string): if given a twist joint, don't generate one.
+        twist_joints list(string): if given twist joints, don't generate one.
     return:
         twist joint controls
     '''
     #eventually I will have to automate the twist joints so that they can be an option to add
     #based on wanting 1 or 2, then taking that and placing them in line of the upper to mid, and mid to lower
 
-    twist_joints = twist_joints
+    twist_joints = twist_joints or None
 
     if not twist_joints:
         #create twist joints.
         #create a curve from joint 1 to joint 2
         #from that curve, split it between num_of_twist_joints
         #create joint from and place it on thoes points
+        twist_curve_line = cmds.curve(name = f'pv_{mid_joint_name}_line', p=[(0,0,0), (1,0,0)],  d = 1)
+        cluster1 = cmds.cluster( f'{pole_vector_line}.cv[0]')
+        cluster2 = cmds.cluster( f'{pole_vector_line}.cv[1]')
+
         for t_jnt in range(num_of_twist_joints):
             twist_joints.append(cmds.joint())
+
+
+    # Make line
+    test_line = cmds.curve(name = 'test_line', p=[(2,0,2), (4,0,6)],  d = 1)
+
+    # Make locators
+    for locs in range(num_of_twist_joints):
+        
+    loc1 = cmds.spaceLocator(name = 'test_temp_loc1')
+    loc2 = cmds.spaceLocator(name = 'test_temp_loc2')
+    loc3 = cmds.spaceLocator(name = 'test_temp_loc3')
+    loc4 = cmds.spaceLocator(name = 'test_temp_loc4')
+    loc5 = cmds.spaceLocator(name = 'test_temp_loc5')
+
+
+    p1 = f'{test_line}.cv[0]'
+    p2 = f'{test_line}.cv[1]'
+
+    pos1 = cmds.xform(p1, query = True, ws = True, t = True)
+    pos2 = cmds.xform(p2, query = True, ws = True, t = True)
+
+
+
+    cmds.xform(loc1, t = pos1, ws = True)
+    cmds.xform(loc2, t = pos2, ws = True)
+
+    import maya.app.general.positionAlongCurve
+    maya.app.general.positionAlongCurve.positionAlongCurve()
+
 
     #create controls
     twist_joint_controls = list()
@@ -2005,6 +2063,8 @@ https://www.aganimator.com/tutorials/2016/2/19/saving-mayas-skin-weights-to-json
 rc_tool()
 
 
+
+
 #export_rig_setup('biped', 180, package_locators = joints_to_locators())
 #export_rig_setup('biped', 180)
 #change_package_locator(size = 1.5, width = 3)
@@ -2099,7 +2159,10 @@ if __name__ == "__main__":
     sys.exit(app.exec_())
 """
 
-
+'''
+import  rc_tools.rc_tools
+reload(rc_tools)
+'''
 
 
 
