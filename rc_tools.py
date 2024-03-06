@@ -1217,44 +1217,20 @@ def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1
 
     if not twist_joints:
         #create twist joints.
-        #create a curve from joint 1 to joint 2
-        #from that curve, split it between num_of_twist_joints
-        #create joint from and place it on thoes points
-        twist_curve_line = cmds.curve(name = f'pv_{mid_joint_name}_line', p=[(0,0,0), (1,0,0)],  d = 1)
-        cluster1 = cmds.cluster( f'{pole_vector_line}.cv[0]')
-        cluster2 = cmds.cluster( f'{pole_vector_line}.cv[1]')
+        # check the translation of bind_joint_tip
+        # this will give you direction and total distance.
+        segment_length = 0
+        for direction in ('x', 'y', 'z'):
+            length = cmds.getattr(f'{bind_joint_tip}.t{direction}')
+            if length:
+                segment_length = length
+                break
 
-        for t_jnt in range(num_of_twist_joints):
-            twist_joints.append(cmds.joint())
-
-
-    # Make line
-    test_line = cmds.curve(name = 'test_line', p=[(2,0,2), (4,0,6)],  d = 1)
-
-    # Make locators
-    for locs in range(num_of_twist_joints):
-        
-    loc1 = cmds.spaceLocator(name = 'test_temp_loc1')
-    loc2 = cmds.spaceLocator(name = 'test_temp_loc2')
-    loc3 = cmds.spaceLocator(name = 'test_temp_loc3')
-    loc4 = cmds.spaceLocator(name = 'test_temp_loc4')
-    loc5 = cmds.spaceLocator(name = 'test_temp_loc5')
-
-
-    p1 = f'{test_line}.cv[0]'
-    p2 = f'{test_line}.cv[1]'
-
-    pos1 = cmds.xform(p1, query = True, ws = True, t = True)
-    pos2 = cmds.xform(p2, query = True, ws = True, t = True)
-
-
-
-    cmds.xform(loc1, t = pos1, ws = True)
-    cmds.xform(loc2, t = pos2, ws = True)
-
-    import maya.app.general.positionAlongCurve
-    maya.app.general.positionAlongCurve.positionAlongCurve()
-
+        for i in range(num_of_twist_joints):
+            twist_jnt = cmds.joint(name = f'bind_joint_root')
+            # match transform to bind_joint_root
+            # move joint down axis segment_length * (i/(num_of_twist_joints + 1))
+            twist_joints.append(twist_jnt)
 
     #create controls
     twist_joint_controls = list()
