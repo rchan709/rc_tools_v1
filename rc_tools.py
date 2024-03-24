@@ -299,11 +299,12 @@ def controls_for_biped(joints, height_scale):
     '''
     main_loc_group = cmds.ls('*_rig')[0]
     setup_group = cmds.ls('*_setup_grp')[0]
-    controls_group = cmds.group(name = 'controls' + group_suffix, empty=True)
+    controls_group = cmds.group(name = f'controls{group_suffix}', empty=True)
     systems_group = cmds.group(name = 'DO_NOT_TOUCH', empty=True)
-    constraints_group = cmds.group(name = 'constraints' + group_suffix, empty=True, parent = systems_group)
-    systems_joints_group = cmds.group(name = 'DNE_joints' + group_suffix, empty=True, parent = systems_group)
-    cmds.parent([controls_group, systems_group], main_loc_group)
+    geo_group = cmds.group(name = f'geo{group_suffix}', empty=True)
+    constraints_group = cmds.group(name = f'constraints{group_suffix}', empty=True, parent = systems_group)
+    systems_joints_group = cmds.group(name = f'DNE_joints{group_suffix}', empty=True, parent = systems_group)
+    cmds.parent([controls_group, systems_group, geo_group], main_loc_group)
 
     # Why cant get height scale be used here, but most importantly not in create_control_for_joint?
     #height_scale_group = cmds.ls('*_height_scale_grp')[0]
@@ -396,115 +397,23 @@ def controls_for_biped(joints, height_scale):
                     elif side == 'r':
                         fingers_list.append(create_control_for_joint(digit, parent = fingers_list[-1][1], shape = 'pyramid_45', loc_shape = [0,.02,0], scale = [.01,.01,.01]))
 
-        '''
-        DEPRICATED: Combined these loops
-
-        #L_fingers
-        l_fingers_list = list()
-        hand_joint = cmds.ls(f'hand_l{joint_suffix}')[0]
-        l_finger_base = cmds.listRelatives(hand_joint)
-        for finger in l_finger_base:
-            l_fingers_list.append(create_control_for_joint(finger, height_scale, parent = root_control[1], shape = 'pyramid_45', loc_shape = [0,-.02,0], rot_shape = [180,0,0], scale = [.02,.02,.02]))
-            finger_constraint = cmds.parentConstraint(hand_joint, l_fingers_list[-1][0], mo = True)
-            cmds.parent(finger_constraint, constraints_group)
-            digits = cmds.listRelatives(finger, allDescendents = True)
-            digits.sort()
-            for i, digit in enumerate(digits):
-                print(cmds.listRelatives(finger, allDescendents = True))
-                l_fingers_list.append(create_control_for_joint(digit, height_scale, parent = l_fingers_list[-1][1], shape = 'pyramid_45', loc_shape = [0,-.02,0], rot_shape = [180,0,0], scale = [.01,.01,.01]))
-
-        #R_fingers
-        r_fingers_list = list()
-        hand_joint = cmds.ls(f'hand_r{joint_suffix}')[0]
-        r_finger_base = cmds.listRelatives(hand_joint)
-        for finger in r_finger_base:
-            r_fingers_list.append(create_control_for_joint(finger, height_scale, parent = root_control[1], shape = 'pyramid_45', loc_shape = [0,.02,0], scale = [.02,.02,.02]))
-            finger_constraint = cmds.parentConstraint(hand_joint, r_fingers_list[-1][0], mo = True)
-            cmds.parent(finger_constraint, constraints_group)
-            digits = cmds.listRelatives(finger, allDescendents = True)
-            digits.sort()
-            for i, digit in enumerate(digits):
-                print(cmds.listRelatives(finger, allDescendents = True))
-                r_fingers_list.append(create_control_for_joint(digit, height_scale, parent = r_fingers_list[-1][1], shape = 'pyramid_45', loc_shape = [0,.02,0], scale = [.01,.01,.01]))
-        '''
-        
         print('FINISHED UP TO FINGERS\n\n\n\n')
             
         for side in ['r', 'l']:
-            #arm_controls = arm_setup(f'upperarm_{side}{joint_suffix}', f'lowerarm_{side}{joint_suffix}', f'hand_{side}{joint_suffix}', root = root_control[1], ik_jnt = f'ik_foot_{side}{joint_suffix}', side = side)
-            '''
-            if side == 'l':
-                arm_switch = l_arm_ik_switch_control[1][0]
-            else:
-                arm_switch = r_arm_ik_switch_control[1][0]
-            '''
-
             #arm_controls = arm_setup(f'upperarm_{side}{joint_suffix}', f'lowerarm_{side}{joint_suffix}', f'hand_{side}{joint_suffix}', ik_jnt = f'ik_hand_{side}{joint_suffix}', side = side, switch = arm_ik_switch_control[1][0], root = pelvis_control[1])
             arm_controls = arm_setup(f'upperarm_{side}{joint_suffix}', f'lowerarm_{side}{joint_suffix}', f'hand_{side}{joint_suffix}', ik_jnt = f'ik_hand_{side}{joint_suffix}', side = side, switch = arm_ik_switch_control[1][0], root = root_control[1])
             leg_controls = leg_setup(f'thigh_{side}{joint_suffix}', f'calf_{side}{joint_suffix}', f'foot_{side}{joint_suffix}', f'ball_{side}{joint_suffix}',ik_jnt = f'ik_foot_{side}{joint_suffix}', side = side, switch = leg_ik_switch_control[1][0], root = root_control[1])
 
-        #no left and right side loop because of ctrl shape
-        # Coloring Controls
-        '''
-        left_controls = cmds.ls(f'*_l{control_suffix}')
-        for ctrl in left_controls:
-            cmds.setAttr(f'{ctrl}.overrideEnabled', 1)
-            cmds.setAttr(f'{ctrl}.overrideColor', 6)
+        
 
-        right_controls = cmds.ls(f'*_r{control_suffix}')
-        for ctrl in right_controls:
-            cmds.setAttr(f'{ctrl}.overrideEnabled', 1)
-            cmds.setAttr(f'{ctrl}.overrideColor', 13)
-        '''
-        controls = cmds.listRelatives(controls_group, children = True, type = 'transform')
-        auto_color_controls(controls_group)
-
-        return
+        # Space Switching
+        #create_space_switching_attr(control, switch_with_1, switch_with_2 = None, switch_name = None)
+        #ik hands -> root -> pelvis -> shoulder -> other hand
+        #ik elbow -> root -> pelvis -> shoulder
+        #ik feet -> root -> pelvis
+        #ik knee -> root -> pelvis
+        #local -> world
     
-        for side in ['r', 'l']:
-
-            # IK FK leg Setup
-            #leg_setup = leg_setup(f'thigh_{side}{joint_suffix}', f'calf_{side}{joint_suffix}', f'foot_{side}{joint_suffix}', f'ball_{side}{joint_suffix}', root_control[1], ik_jnt = f'ik_foot_{side}{joint_suffix}')
-            #cmds.parent(leg_setup, pelvis_control)
-
-            # Clavical
-            clavical = create_control_for_joint(f'clavicle_{side}{joint_suffix}', height_scale, parent = spine_list[-1][1], shape = 'bean') 
-            continue
-            # IK FK arm Setup
-            ik_arm_setup = arm_setup(f'upperarm_{side}{joint_suffix}', f'lowerarm_{side}{joint_suffix}', f'hand_{side}{joint_suffix}', root_control[1], ik_jnt = f'ik_hand_{side}{joint_suffix}')
-            cmds.parent(ik_arm_setup, clavical)
-            
-            # Finger Controls
-            for finger in ['thumb', 'index', 'middle', 'ring', 'pinky']:
-                first_digit_joint = f'{finger}_metacarpal_{side}{joint_suffix}'
-
-                #parents first digit to the hand joint           
-                first_digit = create_control_for_joint(first_digit_joint, f'hand_{side}{joint_suffix}')
-
-                # Has to be the correct order so the parent exists when creating the children. .reverse() doesnt seem to work?
-                #finger_digits = cmds.listRelatives(first_digit_joint, allDescendents = True, type = 'joint').reverse()
-                '''
-                finger_digits = cmds.listRelatives(first_digit_joint, allDescendents = True, type = 'joint')
-                finger_list = list()
-                for i in range(len(finger_digits)):
-                    
-                    if i == 0:
-                        finger_list.append(create_control_for_joint(finger_digits.pop(), first_digit[1]))
-                    else:
-                        finger_list.append(create_control_for_joint(finger_digits.pop(), finger_list[-1][1]))
-
-                thursday 4pm office depot
-                '''
-
-                finger_list = list()
-                finger_joint = cmds.ls(f'{finger}_*_{side}{joint_suffix}')
-                for i, digit in enumerate(finger_joint):
-                    if i == 0:
-                        finger_list.append(create_control_for_joint(digit, first_digit[1]))
-                    else:
-                        finger_list.append(create_control_for_joint(digit, finger_list[-1][1]))
-    
-        #auto_color_controls(controls_group)
         #change_color_controls(ik_switcher_ctrl, 16)
                         
         # Stores perfered joint angle or root (I think you only need the root)
@@ -514,22 +423,41 @@ def controls_for_biped(joints, height_scale):
         # move Controls to a control layer
         # create a geo layer
         # have some sort of dialoge to get the namespace
-        # space switching between locations (like changing the ik hand)
+
+        # Control fixing
+        # Color
+        controls = cmds.listRelatives(controls_group, children = True, type = 'transform')
+        auto_color_controls(controls_group, only_default = True)
+        change_color_controls(arm_ik_switch_control[1][0], 16)
+        change_color_controls(leg_ik_switch_control[1][0], 16)
+
+        # Rotation
+        rotate_cv('DNE_ik_upperarm_l_ctrl', [0, 180, 0])
+        rotate_cv('DNE_ik_thigh_r_ctrl', [0, 180, 0])
+        
                     
     except Exception as e:
         cmds.warning(f'     ##### Error: {e} #####')
-        cmds.warning('Controls deleted...')
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         print(exc_type, fname, exc_tb.tb_lineno)
-        return
-        cmds.delete(controls_group, systems_group)
+        #cmds.delete(controls_group, systems_group)
+        cmds.warning('Controls deleted...')
     finally:
         # Maybe at the end of the try instead
         print('Finally delete setup group.')
-        #cmds.delete(setup_group)
+        cmds.delete(setup_group)
 
     return controls_group, systems_group
+
+
+def rotate_cv(control, rot):
+    '''
+    arguments:
+        control (string): The control to rotate
+        degrees list(float): The amount to rotate
+    '''
+    cmds.xform(f'{control}.cv[:]', rotation = rot)
 
 
 def get_height_scale():
@@ -630,15 +558,30 @@ def arm_setup(upperarm, lowerarm, hand, root = None, ik_jnt = None, side = None,
         for things in decendants:
             if things.find('twist') > 0:
                 twist_joints.append(things)
+        
+        twists = len(twist_joints) or 2
 
         ########
         # Creatng twist joints anyways.
-        twists = len(twist_joints) or 2
         to_delete(twist_joints)
         twist_joints = list()
-        print('deleting twist joints for arm')
+        print(f'Deleting twist joints for {joint}')
         ########
 
+        # Create twist controls
+        if joint == upperarm:
+            if twist_joints:
+                create_twist_joints(upperarm, lowerarm, twist_joints = twist_joints, ctrl_root = root)
+            else:
+                create_twist_joints(upperarm, lowerarm, twists, ctrl_root = root)
+        elif joint == lowerarm:
+            if twist_joints:
+                create_twist_joints(lowerarm, hand, twist_joints = twist_joints, ctrl_root = root)
+            else:
+                create_twist_joints(lowerarm, hand, twists, ctrl_root = root)   
+
+        # dont need if because controls will need to be created anyways even if joints exist
+        '''
         if twist_joints:
             print(f'Theres existing twist joints in {joint}')
             print(twist_joints)
@@ -648,7 +591,7 @@ def arm_setup(upperarm, lowerarm, hand, root = None, ik_jnt = None, side = None,
                 create_twist_joints(upperarm, lowerarm, twists, ctrl_root = root)
             elif joint == lowerarm:
                 create_twist_joints(lowerarm, hand, twists, ctrl_root = root)
-    
+        '''
     return
     
 
@@ -689,6 +632,30 @@ def leg_setup(thigh, calf, foot, ball, root = None, ik_jnt = None, side = None, 
         for things in decendants:
             if things.find('twist') > 0:
                 twist_joints.append(things)
+        
+        twists = len(twist_joints) or 2
+        '''
+        ########
+        # Creatng twist joints anyways.
+        to_delete(twist_joints)
+        twist_joints = list()
+        print(f'Deleting twist joints for {joint}')
+        ########
+        '''
+        # Create twist controls
+        if joint == thigh:
+            if twist_joints:
+                create_twist_joints(thigh, calf, twist_joints = twist_joints, ctrl_root = root)
+            else:
+                create_twist_joints(thigh, calf, twists, ctrl_root = root)
+        elif joint == calf:
+            if twist_joints:
+                create_twist_joints(calf, foot, twist_joints = twist_joints, ctrl_root = root)
+            else:
+                create_twist_joints(calf, foot, twists, ctrl_root = root)   
+
+        # dont need if because controls will need to be created anyways even if joints exist
+        '''      
         if twist_joints:
             print(f'Theres existing twist joints in {joint}')
             print(twist_joints)
@@ -698,7 +665,7 @@ def leg_setup(thigh, calf, foot, ball, root = None, ik_jnt = None, side = None, 
                 create_twist_joints(thigh, calf, 2, ctrl_root = root)
             elif joint == calf:
                 create_twist_joints(calf, foot, 2, ctrl_root = root)
-    
+        '''
     #Create ball control with roll
     return 
 
@@ -881,6 +848,7 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
         pole_vector_parent: where the pole vector control is parented. (give the root ctrl usually)
         top_joint_parent: the joint the new joints are going to be parented to.
         attr_name: name of the attribute on the switch control (could be combined to switch control?)
+        rotate_180 list(string): list of controls to rotate 180 degrees in Y axis
 
     return:
         [[ik_joints], [ik_controls]],
@@ -898,6 +866,7 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
     joint_list = [bind_joint_top, bind_joint_mid, bind_joint_bottom]
 
     systems_group = cmds.ls('DO_NOT_TOUCH')[0]
+    controls_group = cmds.ls('controls' + group_suffix)[0]
     constraints_group = cmds.ls('constraints' + group_suffix)[0]
     systems_joints_group = cmds.ls(f'DNE_joints{group_suffix}')[0]
 
@@ -914,9 +883,12 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
     else:
         ik_setup_group = cmds.group(name = f'{top_joint_name}_ikfk_objects_{group_suffix}', parent = systems_group, empty = True)
     '''
+    #Finds the control for top joint's parent
+    top_parent = cmds.listRelatives(bind_joint_top, parent = True)[0]
+    top_parent_control = get_joints_control(top_parent)
+    #joint_top_parent = cmds.listRelatives(bind_joint_top, parent = True)[0]
+    #control_top_parent = joint_top_parent.replace(joint_suffix, control_suffix)
 
-    joint_top_parent = cmds.listRelatives(bind_joint_top, parent = True)[0]
-    control_top_parent = joint_top_parent.replace(joint_suffix, control_suffix)
 
     #Adds Attribute to switch
     cmds.addAttr(switch_control, longName = attr_name, attributeType = 'double', min = 0, max = 1, keyable = True)
@@ -981,9 +953,18 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
             cmds.setDrivenKeyframe(fk_target_attr, currentDriver = f'{switch_control}.{attr_name}', driverValue = 0, value = 0)
 
         # Creating controls for fk controls
-        for fk_joint in fk_joints:
-            fk_joint_parent = cmds.listRelatives(fk_joint, parent = True) or cmds.parentConstraint(fk_joint, q=True, tl=True)
-            fk_joint_parent = fk_joint_parent[0]
+        for i, fk_joint in enumerate(fk_joints):
+            if i == 0:
+                # Parent is the clavical control, right? Not sire why either of these work
+                #fk_joint_parent = cmds.parentConstraint(fk_joint, q=True, tl=True)
+                #fk_joint_parent = cmds.listRelatives(fk_joint, parent = True)[0]
+                #fk_joint_parent = control_top_parent
+
+                #top_parent = cmds.listRelatives(bind_joint_top, parent = True)[0]
+                fk_joint_parent = top_parent_control
+            else:
+                fk_joint_parent = fk_controls[-1]
+            #fk_joint_parent = fk_joint_parent[0]
             print(f'Joint: {fk_joint}, parent: {fk_joint_parent}, listRelatives: {cmds.listRelatives(fk_joint, parent = True)}, parent const target list: {cmds.parentConstraint(fk_joint, q=True, tl=True)}')
             fk_control = create_control_for_joint(fk_joint, parent = fk_joint_parent, shape = 'circle', scale = [.1,.1,.1])[1]
             fk_controls.append(fk_control)
@@ -992,8 +973,8 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
             cmds.setDrivenKeyframe(f'{fk_control[0]}.visibility', currentDriver = f'{switch_control}.{attr_name}', driverValue = 0, value = 0)
 
         # Parent the shoulder fk to the clavical
-        top_ctrl_grp = cmds.listRelatives(fk_controls[0], parent = True)[0]
-        cmds.parent(top_ctrl_grp, control_top_parent)
+        #top_ctrl_grp = cmds.listRelatives(fk_controls[0], parent = True)[0]
+        #cmds.parent(top_ctrl_grp, control_top_parent)
 
         #####################################
         # Creating controls for ik controls #
@@ -1004,7 +985,7 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
 
         # IK Shoulder
         # Shoulder control might not be needed
-        ik_shoulder_ctrl = create_control_for_joint(ik_joints[0], parent = control_top_parent, shape = 'handle_square', loc_shape = [0, 0, -0.1], rot_shape= [0, 0, 90], scale = [0.2, 0.2, 0.2])[1]
+        ik_shoulder_ctrl = create_control_for_joint(ik_joints[0], parent = top_parent_control, shape = 'handle_square', loc_shape = [0, 0, -0.1], rot_shape= [0, 0, 90], scale = [0.2, 0.2, 0.2])[1]
         ik_controls.append(ik_shoulder_ctrl)
         
         # Creating the IK handle
@@ -1013,7 +994,6 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
         ik_handle = cmds.ikHandle(name = f'{bottom_joint_name}_ik_handle', startJoint = ik_joints[0], endEffector = ik_joints[2], solver = 'ikRPsolver') # [ikHandle, effector]
         #ik_handle_ctrl = create_control_for_joint(ik_handle[0], parent = f'root{control_suffix}', shape = 'circle', rot_shape= [0, 90, 0], scale = [0.08, 0.08, 0.08])
 
-        
         # mo = False gets us the correct result, but I think there are other issues in the joint rotations
         # not using parent constraint because twist joints dont follow the rotation/position of the arm switching between ik and fk instead of just following rotation
         bottom_orient_constraint = cmds.orientConstraint(ik_handle_ctrl[1], ik_joints[2], mo = True)
@@ -1079,6 +1059,7 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
         # Create line from ik mid joint to pole vector control
         #pole_vector_line = cmds.curve(p=[pole_vector_location, cmds.xform(bind_joint_mid, query = True, absolute = True, translation = True)],  d = 1)
         pole_vector_line = cmds.curve(name = f'pv_{mid_joint_name}_line', p=[(0,0,0), (1,0,0)],  d = 1)
+        cmds.parent(pole_vector_line, controls_group)
         cmds.setAttr(f'{pole_vector_line}.template', 1)
         cmds.setAttr(f'{pole_vector_line}.overrideEnabled', 1)
         cmds.setAttr(f'{pole_vector_line}.lineWidth', 2)
@@ -1096,10 +1077,9 @@ def create_2_jnt_ik_setup(bind_joint_top, bind_joint_mid, bind_joint_bottom, swi
         cmds.parentConstraint(ik_joints[1], cluster1, mo = False)
         cmds.parentConstraint(pole_vector_control, cluster2, mo = False)
 
-        # Parent clusters and line in systems_group
+        # Parent clusters in systems_group
         cmds.parent(cluster1[1], ik_setup_sys_group)
         cmds.parent(cluster2[1], ik_setup_sys_group)
-        cmds.parent(pole_vector_line, ik_setup_sys_group)
         ik_controls.append([pole_vector_line])
 
         # Create empty group at pole vector location to parent to fk mid control for fkik matching.
@@ -1214,6 +1194,31 @@ def create_space_switching_attr(control, switch_with_1, switch_with_2 = None, sw
         cmds.setDrivenKeyframe(switch_with_2, currentDriver = f'{control}.{name}', driverValue = 1, value = 0, inTangentType = 'linear', outTangentType = 'linear')
         
 
+def get_joints_control(joint):
+    '''
+    Uses:
+        give this the parent of the joint youre making a control for to know where the control should be parented to.
+    arguments:
+        joint (string): joint
+    return:
+        the control for the joint given
+    '''
+    # Getting the connections
+    parent_connections = cmds.listConnections(joint, scn = True)
+
+    # Search connections for a parent constraint
+    for connection in parent_connections:
+        if 'parentConstraint' in connection:
+            parent_ctrl = cmds.parentConstraint(connection, query = True, targetList = True)[0]
+            return parent_ctrl
+        elif 'orientConstraint' in connection:
+            parent_ctrl = cmds.orientConstraint(connection, query = True, targetList = True)[0]
+            return parent_ctrl
+        elif 'pointConstraint' in connection:
+            parent_ctrl = cmds.pointConstraint(connection, query = True, targetList = True)[0]
+            return parent_ctrl
+
+
 def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1, twist_joints = list(), ctrl_root = None):
     '''
     arguments:
@@ -1228,15 +1233,17 @@ def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1
     #eventually I will have to automate the twist joints so that they can be an option to add
     #based on wanting 1 or 2, then taking that and placing them in line of the upper to mid, and mid to lower
 
-    twist_joints = twist_joints or list()
     constraints_group = cmds.ls('constraints' + group_suffix)[0]
+    joint_root_name = bind_joint_root[:(len(bind_joint_root) - len(joint_suffix))]
+    twist_joints = twist_joints or list()
 
     try:
+        twist_ctrl_root = ctrl_root
+
         if not twist_joints:
             #create twist joints.
             # check the translation of bind_joint_tip
             # this will give you direction and total distance.
-            joint_root_name = bind_joint_root[:(len(bind_joint_root) - len(joint_suffix))]
             segment_length = 0
             direction = None
             for d in ('x', 'y', 'z'):
@@ -1245,12 +1252,12 @@ def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1
                     segment_length = length
                     direction = d
                     break
-            
-            twist_ctrl_root = ctrl_root # or
 
             # Getting the control of where to parent twist controls
             if not twist_ctrl_root:
                 root_parent = cmds.listRelatives(bind_joint_root, parent = True)[0]
+                twist_ctrl_root = get_joints_control(root_parent)
+                '''
                 connections = cmds.listConnections(root_parent, scn = True)
 
                 # Search connections for a parent constraint
@@ -1259,7 +1266,7 @@ def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1
                         # Get the parent constraint connection then store target list as the twist_ctrl_root
                         twist_ctrl_root = cmds.parentConstraint(c, query = True, targetList = True)[0]
                         break
-            
+                '''
             for i in range(num_of_twist_joints):
                 # Creating the twist joints
                 name_parts = joint_root_name.split('_')
@@ -1278,10 +1285,17 @@ def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1
         for t_jnt in twist_joints:
             # change parent to the control?
             # or have the control parent constrained to the joint so it moves with either ik or fk and not have the controls in the joints folder
-            t_jnt_ctrl = create_control_for_joint(t_jnt, parent = twist_ctrl_root, shape = 'pentagon', rot_shape= [0, 90, 0], scale = [0.12, 0.12, 0.12])
+            t_jnt_ctrl = create_control_for_joint(t_jnt, parent = twist_ctrl_root, shape = 'cross', rot_shape= [0, 0, 90], scale = [0.08, 0.08, 0.08])
             print(f'{t_jnt}: {t_jnt_ctrl}')
             p_constraint = cmds.parentConstraint(bind_joint_root, t_jnt_ctrl[0], mo = True)
             cmds.parent(p_constraint, constraints_group)
+
+            if '_r' in joint_root_name:
+                # Red
+                change_color_controls(t_jnt_ctrl[1][0], 20)
+            if '_l' in joint_root_name:
+                # Blue
+                change_color_controls(t_jnt_ctrl[1][0], 18)
 
             twist_joint_controls.append(t_jnt_ctrl[1])
     except Exception as e:
@@ -1293,40 +1307,31 @@ def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1
     return twist_joint_controls
 
 
-def auto_color_controls(controls_group):
+def auto_color_controls(controls_group, only_default = False):
     '''
     arguments:
         controls_group list(string): The main controls group
+        only_default (boolean): only change if the color isnt changed
     '''
     try:
-        # For changing the controls color so left is blue, right is red, center is yellow
-        right_controls = list()
-        left_controls = list()
-        center_controls = list()
-
         # Gets controls in group
         controls_in_group = [t for t in cmds.listRelatives(controls_group, allDescendents = True, type = 'transform') if control_suffix in t]
 
-        for i, ctrl in enumerate(controls_in_group):
+        for ctrl in controls_in_group:
+            # Only skip color changing if 
+            if only_default and cmds.getAttr(f'{ctrl}.overrideEnabled') == 1:
+                continue    
+
             if '_r' in ctrl:
-                change_color_controls(ctrl, 6)
-                #right_controls.append(controls_in_group[i])
-            elif '_l' in ctrl:
+                # Red
                 change_color_controls(ctrl, 13)
-                #left_controls.append(controls_in_group[i])
+            elif '_l' in ctrl:
+                # Blue
+                change_color_controls(ctrl, 6)
             else:
+                # Yellow
                 change_color_controls(ctrl, 17)
-                #center_controls.append(controls_in_group[i])
-        '''
-        for ctrl in right_controls:
-            change_color_controls(ctrl, 6)
 
-        for ctrl in left_controls:
-            change_color_controls(ctrl, 13)
-
-        for ctrl in center_controls:
-            change_color_controls(ctrl, 17)
-        '''
     except Exception as e:
         cmds.warning(f'     ##### Error: {e} #####')
         exc_type, exc_obj, exc_tb = sys.exc_info()
