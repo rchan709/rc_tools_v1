@@ -1290,6 +1290,10 @@ def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1
             p_constraint = cmds.parentConstraint(bind_joint_root, t_jnt_ctrl[0], mo = True)
             cmds.parent(p_constraint, constraints_group)
 
+            # is there a way to intercept the twist connections of the shoulder/wrist and apply them to the control's group's?
+
+
+
             if '_r' in joint_root_name:
                 # Red
                 change_color_controls(t_jnt_ctrl[1][0], 20)
@@ -1305,6 +1309,22 @@ def create_twist_joints(bind_joint_root, bind_joint_tip, num_of_twist_joints = 1
         print(exc_type, fname, exc_tb.tb_lineno)
 
     return twist_joint_controls
+
+
+def create_corrective_joints():
+    '''
+    For creating corrective joints in areas such as the elbow, knee, hips. Adds 
+    arguments:
+        base joint (string): The main controls group
+        num_corrective_joints (int): only change how many corrective joints are made. (1, 2, 4?)
+        or
+        directions_for_joints list(string): ([x, y, z, -x, -y, -z])
+        distance (float): how far from the base joints are located.
+    '''
+    print()
+
+
+
 
 
 def auto_color_controls(controls_group, only_default = False):

@@ -7,14 +7,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1108</width>
-    <height>669</height>
+    <width>1277</width>
+    <height>691</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>400</width>
-    <height>600</height>
+    <width>650</width>
+    <height>650</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
        <bool>false</bool>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <property name="usesScrollButtons">
        <bool>true</bool>
@@ -82,11 +82,11 @@
              <attribute name="headerVisible">
               <bool>false</bool>
              </attribute>
-             <attribute name="headerHighlightSections">
-              <bool>false</bool>
-             </attribute>
              <attribute name="headerMinimumSectionSize">
               <number>40</number>
+             </attribute>
+             <attribute name="headerHighlightSections">
+              <bool>false</bool>
              </attribute>
              <attribute name="headerShowSortIndicator" stdset="0">
               <bool>false</bool>
@@ -142,15 +142,25 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Toggle Vis</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButton">
             <property name="maximumSize">
              <size>
-              <width>40</width>
+              <width>80</width>
               <height>40</height>
              </size>
             </property>
             <property name="text">
-             <string>Show Locators</string>
+             <string>Locators</string>
             </property>
            </widget>
           </item>
@@ -158,12 +168,12 @@
            <widget class="QPushButton" name="pushButton_2">
             <property name="maximumSize">
              <size>
-              <width>40</width>
+              <width>80</width>
               <height>40</height>
              </size>
             </property>
             <property name="text">
-             <string>Show mesh</string>
+             <string>Mesh</string>
             </property>
            </widget>
           </item>
@@ -171,12 +181,12 @@
            <widget class="QPushButton" name="pushButton_7">
             <property name="maximumSize">
              <size>
-              <width>40</width>
+              <width>80</width>
               <height>40</height>
              </size>
             </property>
             <property name="text">
-             <string>ShowControls</string>
+             <string>Controls</string>
             </property>
            </widget>
           </item>
@@ -184,14 +194,27 @@
            <widget class="QPushButton" name="pushButton_38">
             <property name="maximumSize">
              <size>
-              <width>40</width>
+              <width>80</width>
               <height>40</height>
              </size>
             </property>
             <property name="text">
-             <string>ShopLRA</string>
+             <string>LRA</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
            <widget class="Line" name="line">
@@ -204,12 +227,12 @@
            <widget class="QPushButton" name="pushButton_8">
             <property name="maximumSize">
              <size>
-              <width>40</width>
+              <width>80</width>
               <height>40</height>
              </size>
             </property>
             <property name="text">
-             <string>PushButton</string>
+             <string>orient loc to jnt</string>
             </property>
            </widget>
           </item>
@@ -217,7 +240,7 @@
            <widget class="QPushButton" name="pushButton_9">
             <property name="maximumSize">
              <size>
-              <width>40</width>
+              <width>80</width>
               <height>40</height>
              </size>
             </property>
@@ -230,7 +253,7 @@
            <widget class="QPushButton" name="pushButton_10">
             <property name="maximumSize">
              <size>
-              <width>40</width>
+              <width>80</width>
               <height>40</height>
              </size>
             </property>
@@ -238,19 +261,6 @@
              <string>PushButton</string>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </item>
@@ -279,41 +289,37 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>536</width>
-                  <height>438</height>
+                  <width>705</width>
+                  <height>449</height>
                  </rect>
                 </property>
                </widget>
               </widget>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_9">
-               <item>
+              <layout class="QGridLayout" name="gridLayout">
+               <item row="0" column="1">
+                <widget class="QPushButton" name="pushButton_16">
+                 <property name="text">
+                  <string>Delete Shape (add confirmation)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
                 <widget class="QPushButton" name="pushButton_17">
                  <property name="text">
                   <string>Save As New Shape</string>
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QPushButton" name="pushButton_16">
-                 <property name="text">
-                  <string>PushButton</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_12">
-               <item>
+               <item row="1" column="0">
                 <widget class="QPushButton" name="pushButton_36">
                  <property name="text">
                   <string>Add selected shape to control</string>
                  </property>
                 </widget>
                </item>
-               <item>
+               <item row="1" column="1">
                 <widget class="QPushButton" name="pushButton_11">
                  <property name="text">
                   <string>Replace control with selected shape</string>
@@ -323,11 +329,25 @@
               </layout>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_37">
-               <property name="text">
-                <string>New control on selected object with selected shape</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_14">
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>Groups</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="spinBox"/>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_37">
+                 <property name="text">
+                  <string>Add Control</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>
@@ -336,6 +356,12 @@
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox_6">
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
             <width>500</width>
@@ -446,6 +472,58 @@
                <property name="title">
                 <string>Color</string>
                </property>
+               <widget class="QToolButton" name="toolButton">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>30</y>
+                  <width>22</width>
+                  <height>22</height>
+                 </rect>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+               <widget class="QToolButton" name="toolButton_2">
+                <property name="geometry">
+                 <rect>
+                  <x>40</x>
+                  <y>30</y>
+                  <width>22</width>
+                  <height>22</height>
+                 </rect>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+               <widget class="QToolButton" name="toolButton_3">
+                <property name="geometry">
+                 <rect>
+                  <x>70</x>
+                  <y>30</y>
+                  <width>22</width>
+                  <height>22</height>
+                 </rect>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+               <widget class="QToolButton" name="toolButton_4">
+                <property name="geometry">
+                 <rect>
+                  <x>100</x>
+                  <y>30</y>
+                  <width>22</width>
+                  <height>22</height>
+                 </rect>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
               </widget>
              </item>
             </layout>
@@ -454,6 +532,12 @@
             <layout class="QVBoxLayout" name="verticalLayout_11">
              <item>
               <widget class="QGroupBox" name="groupBox_7">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>120</height>
+                </size>
+               </property>
                <property name="title">
                 <string>Translate</string>
                </property>
@@ -587,6 +671,12 @@
              </item>
              <item>
               <widget class="QGroupBox" name="groupBox_10">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>120</height>
+                </size>
+               </property>
                <property name="title">
                 <string>Rotate</string>
                </property>
@@ -622,6 +712,12 @@
                  <layout class="QVBoxLayout" name="verticalLayout_21">
                   <item>
                    <widget class="QPushButton" name="pushButton_22">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>+X</string>
                     </property>
@@ -629,6 +725,12 @@
                   </item>
                   <item>
                    <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="decimals">
                      <number>0</number>
                     </property>
@@ -645,6 +747,12 @@
                   </item>
                   <item>
                    <widget class="QPushButton" name="pushButton_23">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>-X</string>
                     </property>
@@ -738,6 +846,12 @@
              </item>
              <item>
               <widget class="QGroupBox" name="groupBox_11">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>120</height>
+                </size>
+               </property>
                <property name="title">
                 <string>Scale</string>
                </property>
@@ -929,31 +1043,172 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
+         <widget class="QGroupBox" name="groupBox_13">
+          <property name="title">
+           <string>Copy skin weights</string>
+          </property>
+          <widget class="QPushButton" name="pushButton_39">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>60</y>
+             <width>808</width>
+             <height>24</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>store weights</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pushButton_40">
+           <property name="geometry">
+            <rect>
+             <x>60</x>
+             <y>110</y>
+             <width>231</width>
+             <height>61</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>apply weights</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_13">
+          <item>
+           <widget class="QPushButton" name="pushButton_42">
+            <property name="text">
+             <string>smart skin</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Influences</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_2"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_41">
+            <property name="text">
+             <string>prune weights</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
          <widget class="QPushButton" name="pushButton_6">
           <property name="text">
-           <string>PushButton</string>
+           <string>hammer skin weights</string>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_4">
+      <widget class="QWidget" name="tab_6">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <attribute name="title">
-        <string>Exporter</string>
+        <string>Physics</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QHBoxLayout" name="horizontalLayout_15">
         <item>
-         <widget class="QLineEdit" name="lineEdit">
-          <property name="text">
-           <string>Save as file name then reopen as filename_working (the file exported is not being worked on, but is replaced when exported.)</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <widget class="QGroupBox" name="groupBox_15">
+            <property name="title">
+             <string>Local Sim (Jiggle)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_14">
+            <property name="title">
+             <string>rope</string>
+            </property>
+            <widget class="QListView" name="listView">
+             <property name="geometry">
+              <rect>
+               <x>40</x>
+               <y>30</y>
+               <width>256</width>
+               <height>192</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_6">
+             <property name="geometry">
+              <rect>
+               <x>140</x>
+               <y>230</y>
+               <width>161</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>selecting the joint chain</string>
+             </property>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_16">
+            <property name="title">
+             <string>Cloth Sim</string>
+            </property>
+            <widget class="QTreeView" name="treeView">
+             <property name="geometry">
+              <rect>
+               <x>50</x>
+               <y>40</y>
+               <width>256</width>
+               <height>192</height>
+              </rect>
+             </property>
+            </widget>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_5">
-          <property name="text">
-           <string>PushButton</string>
+         <widget class="QGroupBox" name="groupBox_17">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
+          <property name="title">
+           <string>Attributes</string>
+          </property>
+          <widget class="QLabel" name="label_2">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>30</y>
+             <width>241</width>
+             <height>101</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>this is where i would have cloth/hair sim, rope sim, jiggle sim be</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -978,6 +1233,66 @@
          <bool>true</bool>
         </property>
        </widget>
+       <widget class="QPushButton" name="pushButton_43">
+        <property name="geometry">
+         <rect>
+          <x>100</x>
+          <y>350</y>
+          <width>75</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>fbx</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_44">
+        <property name="geometry">
+         <rect>
+          <x>310</x>
+          <y>350</y>
+          <width>75</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>alembic</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_45">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>360</y>
+          <width>75</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>the pixar open source one</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_4">
+       <attribute name="title">
+        <string>Exporter</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLineEdit" name="lineEdit">
+          <property name="text">
+           <string>Save as file name then reopen as filename_working (the file exported is not being worked on, but is replaced when exported.)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_5">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -988,8 +1303,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1108</width>
-     <height>21</height>
+     <width>1277</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1013,9 +1328,9 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="BG_shape_mirror_space"/>
-  <buttongroup name="BG_shape_rotate_space"/>
-  <buttongroup name="BG_shape_translate_space"/>
   <buttongroup name="BG_shape_scale_space"/>
+  <buttongroup name="BG_shape_rotate_space"/>
+  <buttongroup name="BG_shape_mirror_space"/>
+  <buttongroup name="BG_shape_translate_space"/>
  </buttongroups>
 </ui>
